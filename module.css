@@ -1,0 +1,10 @@
+.owcredits {
+    width: 100%;
+    text-align: right;
+}
+
+hr.thickhr {
+    height: 3px;
+    background-color: orange;
+    border: none;
+}
