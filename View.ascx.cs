@@ -108,9 +108,9 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 {
                     weatherHtml += $"<img src=\"https://openweathermap.org/img/wn/{current.weather[0].icon}@4x.png\" alt=\"{current.weather[0].description}\" title=\"{current.weather[0].description}\" align=\"right\">";
                 }
-               
-                weatherHtml += $"<b>Temperature:</b> {current.temp}°F (Feels like: {current.feels_like}°F)<br />";
+
                 weatherHtml += $"<b>Current Conditions:</b> {current.weather[0].description.ToUpper()}<br />";
+                weatherHtml += $"<b>Temperature:</b> {current.temp}°F (Feels like: {current.feels_like}°F)<br />"; 
                 weatherHtml += $"<b>Humidity:</b> {current.humidity}%<br />";
                 weatherHtml += $"<b>Pressure:</b> {current.pressure} hPa<br />";
                 weatherHtml += $"<b>Wind:</b> {current.wind_speed} mph, {current.wind_deg}°<br />";
@@ -154,27 +154,30 @@ namespace GIBS.Modules.GIBS_OpenWeather
                     }
 
                     forecastHtml += $"<li><strong>{dayOfWeek} ({forecastDate.ToString("M/d")})</strong> {iconimage}";
-                    forecastHtml += $"<br>High: {day.temp.max}°F / Low: {day.temp.min}°F";
-                    forecastHtml += $"<br>Day: {day.temp.day}°F / Night: {day.temp.night}°F";
-                    forecastHtml += $"<br>Morning: {day.temp.morn}°F / Evening: {day.temp.eve}°F";
-                    forecastHtml += $"<br>Feels Like: Day {day.feels_like.day}°F / Night {day.feels_like.night}°F / Morn {day.feels_like.morn}°F / Eve {day.feels_like.eve}°F";
-                    forecastHtml += $"<br>Forecast: {description.ToUpper()}";
-                    forecastHtml += $"<br>Precipitation Probability: {(day.pop * 100):F0}%";
+                    forecastHtml += $"<br><b>Forecast:</b> {description.ToUpper()}";
+                    forecastHtml += $"<br><b>High:</b> {day.temp.max}°F / Low: {day.temp.min}°F";
+                    forecastHtml += $"<br><b>Day:</b> {day.temp.day}°F / Night: {day.temp.night}°F";
+                    forecastHtml += $"<br><b>Morning:</b> {day.temp.morn}°F / Evening: {day.temp.eve}°F";
+                    forecastHtml += $"<br><b>Feels Like:</b> Day {day.feels_like.day}°F / Night {day.feels_like.night}°F / Morn {day.feels_like.morn}°F / Eve {day.feels_like.eve}°F";
+                    
+                    forecastHtml += $"<br><b>Precipitation Probability:</b> {(day.pop * 100):F0}%";
                     if (day.rain.HasValue)
                     {
-                        forecastHtml += $"<br>Rain: {day.rain:F2} mm";
+
+                        double rainInInches = day.rain.Value / 25.4; // Conversion from mm to inches
+                        forecastHtml += $"<br><b>Rain:</b> {day.rain:F2} mm ({rainInInches:F2} in)";
                     }
-                    forecastHtml += $"<br>Humidity: {day.humidity}%";
-                    forecastHtml += $"<br>Wind: {day.wind_speed} mph, {day.wind_deg}° (Gust: {day.wind_gust} mph)";
-                    forecastHtml += $"<br>Clouds: {day.clouds}%";
-                    forecastHtml += $"<br>UV Index: {day.uvi}";
+                    forecastHtml += $"<br><b>Humidity:</b> {day.humidity}%";
+                    forecastHtml += $"<br><b>Wind:</b> {day.wind_speed} mph, {day.wind_deg}° (Gust: {day.wind_gust} mph)";
+                    forecastHtml += $"<br><b>Clouds:</b> {day.clouds}%";
+                    forecastHtml += $"<br><b>UV Index:</b> {day.uvi}";
                     DateTime sunrise = DateTimeOffset.FromUnixTimeSeconds(day.sunrise).LocalDateTime.ToLocalTime();
                     DateTime sunset = DateTimeOffset.FromUnixTimeSeconds(day.sunset).LocalDateTime.ToLocalTime();
                     DateTime moonrise = DateTimeOffset.FromUnixTimeSeconds(day.moonrise).LocalDateTime.ToLocalTime();
                     DateTime moonset = DateTimeOffset.FromUnixTimeSeconds(day.moonset).LocalDateTime.ToLocalTime();
-                    forecastHtml += $"<br>Sunrise: {sunrise.ToString("h:mm tt")}, Sunset: {sunset.ToString("h:mm tt")}";
-                    forecastHtml += $"<br>Moonrise: {moonrise.ToString("h:mm tt")}, Moonset: {moonset.ToString("h:mm tt")}, Moon Phase: {day.moon_phase}";
-                    forecastHtml += $"<br>Summary: {day.summary}";
+                    forecastHtml += $"<br><b>Sunrise:</b> {sunrise.ToString("h:mm tt")}, Sunset: {sunset.ToString("h:mm tt")}";
+                    forecastHtml += $"<br><b>Moonrise:</b> {moonrise.ToString("h:mm tt")}, Moonset: {moonset.ToString("h:mm tt")}, Moon Phase: {day.moon_phase}";
+                    forecastHtml += $"<br><b>Summary:</b> {day.summary}";
                     forecastHtml += "</li><hr class=\"thickhr\">";
                 }
                 forecastHtml += "</ul>";

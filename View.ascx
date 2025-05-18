@@ -24,4 +24,4 @@
 </div>
 
 
-<div class="owcredits"><cite>Data provided by <a href="https://openweathermap.org/">OpenWeather</a></cite></div>
+<div class="owcredits"><cite>Weather data provided by <a href="https://openweathermap.org/" target="_blank">OpenWeather</a></cite></div>

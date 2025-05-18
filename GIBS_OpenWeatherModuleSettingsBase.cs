@@ -11,6 +11,8 @@
 */
 
 using DotNetNuke.Entities.Modules;
+using DotNetNuke.Services.Localization;
+using System.Web.UI;
 
 namespace GIBS.Modules.GIBS_OpenWeather
 {
@@ -61,6 +63,20 @@ namespace GIBS.Modules.GIBS_OpenWeather
             }
         }
 
+        public string CountryCode
+        {
+            get
+            {
+                if (Settings.Contains("countryCode"))
+                    return Settings["countryCode"].ToString();
+                return "";
+            }
+            set
+            {
+                var mc = new ModuleController();
+                mc.UpdateTabModuleSetting(TabModuleId, "countryCode", value.ToString());
+            }
+        }
         public string Latitude
         {
             get
@@ -90,5 +106,8 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 mc.UpdateTabModuleSetting(TabModuleId, "longitude", value.ToString());
             }
         }
+
+
+
     }
 }

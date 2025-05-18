@@ -117,14 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ApiKeyRequired.Text" xml:space="preserve">
+    <value>API Key is Required</value>
+  </data>
   <data name="BasicSettings.Text" xml:space="preserve">
     <value>My Settings</value>
+  </data>
+  <data name="CityRequired.Text" xml:space="preserve">
+    <value>City is Required</value>
   </data>
   <data name="ControlTitle_settings.Text" xml:space="preserve">
     <value>OpenWeather Settings</value>
   </data>
+  <data name="GeocodingError.Text" xml:space="preserve">
+    <value>Geocoding Error</value>
+  </data>
+  <data name="InvalidJsonResponse.Text" xml:space="preserve">
+    <value>Invalid Json Response</value>
+  </data>
+  <data name="LatLongFound.Text" xml:space="preserve">
+    <value>Found It  - Lat/Long Updated</value>
+  </data>
   <data name="lblApiKey.Help" xml:space="preserve">
-    <value>Put your value for your API Key here.</value>
+    <value>Put your value for your API Key here. To get your free API Key &lt;a href="https://home.openweathermap.org/users/sign_up" target="_blank"&gt;sign up here&lt;/a&gt;.</value>
   </data>
   <data name="lblApiKey.Text" xml:space="preserve">
     <value>API Key</value>
@@ -132,16 +147,37 @@
   <data name="lblCity.Text" xml:space="preserve">
     <value>City</value>
   </data>
+  <data name="lblCountryCode.Text" xml:space="preserve">
+    <value>Country Code</value>
+  </data>
   <data name="lblLatitude.Text" xml:space="preserve">
     <value>Latitude</value>
   </data>
   <data name="lblLongitude.Text" xml:space="preserve">
     <value>Longitude</value>
   </data>
+  <data name="lblLookupLatLong.Text" xml:space="preserve">
+    <value>&amp;nbsp;</value>
+  </data>
   <data name="lblSetting2.Help" xml:space="preserve">
     <value>Put your value for Setting 2 here.</value>
   </data>
   <data name="lblState.Text" xml:space="preserve">
-    <value>State</value>
+    <value>State Code</value>
+  </data>
+  <data name="LocationNotFound.Text" xml:space="preserve">
+    <value> Location Not Found</value>
+  </data>
+  <data name="LocationSelected.Text" xml:space="preserve">
+    <value>Location Selected - Lat/Long Updated</value>
+  </data>
+  <data name="MultipleLocationsFound.Text" xml:space="preserve">
+    <value>Multiple Locations Found</value>
+  </data>
+  <data name="SelectLocation.Text" xml:space="preserve">
+    <value>-- Select Location --</value>
+  </data>
+  <data name="UnexpectedError.Text" xml:space="preserve">
+    <value>Unexpected Error</value>
   </data>
 </root>

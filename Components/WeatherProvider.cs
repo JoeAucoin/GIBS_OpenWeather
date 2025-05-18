@@ -109,6 +109,7 @@ namespace GIBS.Modules.GIBS_OpenWeather.Components
                 catch (HttpRequestException ex)
                 {
                     Console.WriteLine($"Error (GetLocationData): {ex.Message}");
+                   // Exceptions.ProcessModuleLoadException(this, $"Error (GetLocationData): {ex.Message}");
                     return null;
                 }
                 catch (JsonException ex)
