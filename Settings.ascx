@@ -4,9 +4,6 @@
 	<h2 id="dnnSitePanel-BasicSettings" class="dnnFormSectionHead"><a href="#" class="dnnSectionExpanded"><%=LocalizeString("BasicSettings")%></a></h2>
 	<fieldset>
          
-<div class="divcentered"><asp:Label ID="ShowMessage" runat="server" Text="" CssClass="messageError"></asp:Label></div>
-
-
 
         <div class="dnnFormItem">
             <dnn:Label ID="lblApiKey" runat="server" /> 
@@ -29,8 +26,9 @@
         </div>
 
          <div class="dnnFormItem">
-            <dnn:label ID="lblLookupLatLong" runat="server" />
+            <dnn:label ID="lblLookupLatLong" runat="server" suffix=":" />
              <asp:LinkButton ID="LinkButtonLookupLatLong" runat="server" OnClick="LinkButtonLookupLatLong_Click">Lookup Lat/Long</asp:LinkButton>
+             &nbsp;&nbsp;<asp:Label ID="ShowMessage" runat="server" Text="" CssClass="messageError"></asp:Label><br />&nbsp;
         </div>
 
 <div class="dnnFormItem" id="divLocationSelect" runat="server" visible="false">

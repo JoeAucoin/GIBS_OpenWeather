@@ -157,7 +157,7 @@
     <value>Longitude</value>
   </data>
   <data name="lblLookupLatLong.Text" xml:space="preserve">
-    <value>&amp;nbsp;</value>
+    <value>Lookup</value>
   </data>
   <data name="lblSetting2.Help" xml:space="preserve">
     <value>Put your value for Setting 2 here.</value>
