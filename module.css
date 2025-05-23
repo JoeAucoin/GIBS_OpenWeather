@@ -9,6 +9,10 @@ hr.thickhr {
     border: none;
 }
 
+.currentConditions {
+    font-size: 1.5em;
+}
+
 
 .messageError {
     border: 1px solid;

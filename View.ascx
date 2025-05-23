@@ -11,7 +11,7 @@
 
     <hr class="thickhr">
 
-    <h3>Today's Weather</h3>
+    <h3>Current Conditions</h3>
     <div id="currentWeather" runat="server">
         <p>Configure Module Settings...</p>
     </div>

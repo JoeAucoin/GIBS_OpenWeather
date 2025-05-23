@@ -109,7 +109,7 @@ namespace GIBS.Modules.GIBS_OpenWeather
                     weatherHtml += $"<img src=\"https://openweathermap.org/img/wn/{current.weather[0].icon}@4x.png\" alt=\"{current.weather[0].description}\" title=\"{current.weather[0].description}\" align=\"right\">";
                 }
 
-                weatherHtml += $"<b>Current Conditions:</b> {current.weather[0].description.ToUpper()}<br />";
+                weatherHtml += $"<span class=\"currentConditions\">{current.weather[0].description.ToUpper()}</span><br />";
                 weatherHtml += $"<b>Temperature:</b> {current.temp}°F (Feels like: {current.feels_like}°F)<br />"; 
                 weatherHtml += $"<b>Humidity:</b> {current.humidity}%<br />";
                 weatherHtml += $"<b>Pressure:</b> {current.pressure} hPa<br />";
