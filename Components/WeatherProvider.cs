@@ -31,7 +31,7 @@ namespace GIBS.Modules.GIBS_OpenWeather.Components
         {
             using (HttpClient client = new HttpClient())
             {
-                string url = $"{ApiUrl}?lat={_latitude}&lon={_longitude}&exclude=minutely,hourly,alerts&appid={_apiKey}&units=imperial";
+                string url = $"{ApiUrl}?lat={_latitude}&lon={_longitude}&exclude=minutely&appid={_apiKey}&units=imperial";
                 try
                 {
                     HttpResponseMessage response = client.GetAsync(url).Result;

@@ -15,6 +15,15 @@ namespace GIBS.Modules.GIBS_OpenWeather
     {
 
         /// <summary>
+        /// locationDisplay control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl locationDisplay;
+
+        /// <summary>
         /// weatherOverview control.
         /// </summary>
         /// <remarks>
@@ -22,5 +31,32 @@ namespace GIBS.Modules.GIBS_OpenWeather
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl weatherOverview;
+
+        /// <summary>
+        /// weatherAlertsTitle control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl weatherAlertsTitle;
+
+        /// <summary>
+        /// weatherAlertsContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl weatherAlertsContainer;
+
+        /// <summary>
+        /// hourlyForecastChartContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl hourlyForecastChartContainer;
     }
 }

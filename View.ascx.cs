@@ -17,8 +17,11 @@ using DotNetNuke.Services.Exceptions;
 using DotNetNuke.Services.Localization;
 using GIBS.Modules.GIBS_OpenWeather.Components;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using DotNetNuke.Common;
 
 namespace GIBS.Modules.GIBS_OpenWeather
 {
@@ -38,12 +41,27 @@ namespace GIBS.Modules.GIBS_OpenWeather
     public partial class View : GIBS_OpenWeatherModuleBase  //, IActionable
     {
 
-        protected System.Web.UI.HtmlControls.HtmlGenericControl currentWeather;
-        protected System.Web.UI.HtmlControls.HtmlGenericControl dailyForecast;
+      //  protected HtmlGenericControl weatherOverview; // Already existing
+        protected HtmlGenericControl currentWeather;  // Already existing
+        protected HtmlGenericControl dailyForecast;   // Already existing
+      //  protected HtmlGenericControl hourlyForecastChartContainer; // New container for the chart
+     //   protected HtmlGenericControl weatherAlertsContainer; // New container for alerts
+     //   protected HtmlGenericControl locationDisplay; // New container for location name
 
         public string _latitude = "";
         public string _longitude = "";
         public string _apiKey = "";
+
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            Page.ClientScript.RegisterClientScriptInclude(this.GetType(), "ChartJS", ("https://cdn.jsdelivr.net/npm/chart.js"));
+
+          //  DotNetNuke.Web.Client.ClientResourceManagement.ClientResourceManager.RegisterScript(this.Page, "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit", FileOrder.Js.DefaultPriority, "DnnPageHeaderProvider");
+
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             try
@@ -91,11 +109,17 @@ namespace GIBS.Modules.GIBS_OpenWeather
             {
                 DisplayCurrentWeather(weatherData.current);
                 DisplayDailyForecast(weatherData.daily);
+                DisplayHourlyForecast(weatherData.hourly);
+                DisplayWeatherAlerts(weatherData.alerts);
+                locationDisplay.Visible = false;
             }
             else
             {
                 currentWeather.InnerHtml = "<p>Failed to retrieve weather data.</p>";
                 dailyForecast.InnerHtml = "";
+                hourlyForecastChartContainer.InnerHtml = ""; // Clear if no data
+                weatherAlertsContainer.InnerHtml = ""; // Clear if no data
+                weatherAlertsTitle.Visible = false;
             }
         }
 
@@ -119,7 +143,10 @@ namespace GIBS.Modules.GIBS_OpenWeather
                     weatherHtml += $"<b>Wind Gust:</b> {current.wind_gust} mph<br />";
                 }
                 weatherHtml += $"<b>Clouds:</b> {current.clouds}%<br />";
-                weatherHtml += $"<b>Visibility:</b> {current.visibility} meters<br />";
+                // Convert meters to miles for visibility
+                double visibilityInMiles = current.visibility * 0.000621371;
+                weatherHtml += $"<b>Visibility:</b> {current.visibility} meters ({visibilityInMiles:F2} miles)<br />"; // Display both
+
                 weatherHtml += $"<b>UV Index:</b> {current.uvi}<br />";
                 DateTime sunrise = DateTimeOffset.FromUnixTimeSeconds(current.sunrise).LocalDateTime;
                 DateTime sunset = DateTimeOffset.FromUnixTimeSeconds(current.sunset).LocalDateTime;
@@ -168,7 +195,11 @@ namespace GIBS.Modules.GIBS_OpenWeather
                         forecastHtml += $"<br><b>Rain:</b> {day.rain:F2} mm ({rainInInches:F2} in)";
                     }
                     forecastHtml += $"<br><b>Humidity:</b> {day.humidity}%";
-                    forecastHtml += $"<br><b>Wind:</b> {day.wind_speed} mph, {day.wind_deg}° (Gust: {day.wind_gust} mph)";
+                    // Convert wind degrees to compass direction for daily forecast
+                    string dailyWindDirection = GetCompassDirection(day.wind_deg);
+                    forecastHtml += $"<br><b>Wind:</b> {day.wind_speed} mph, {dailyWindDirection} at {day.wind_deg}° (Gust: {day.wind_gust} mph)";
+
+                   // forecastHtml += $"<br><b>Wind:</b> {day.wind_speed} mph, {day.wind_deg}° (Gust: {day.wind_gust} mph)";
                     forecastHtml += $"<br><b>Clouds:</b> {day.clouds}%";
                     forecastHtml += $"<br><b>UV Index:</b> {day.uvi}";
                     DateTime sunrise = DateTimeOffset.FromUnixTimeSeconds(day.sunrise).LocalDateTime.ToLocalTime();
@@ -188,6 +219,125 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 dailyForecast.InnerHtml = "<p>No daily forecast data available.</p>";
             }
         }
+
+        private void DisplayHourlyForecast(Hourly[] hourly)
+        {
+            if (hourly != null && hourly.Length > 0)
+            {
+                // Prepare data for Chart.js
+                var labels = new System.Text.StringBuilder();
+                var temperatures = new System.Text.StringBuilder();
+
+                labels.Append("[");
+                temperatures.Append("[");
+
+                // Take up to 24 hours for a reasonable chart size
+                foreach (var hour in hourly.Take(24))
+                {
+                    DateTime hourlyTime = DateTimeOffset.FromUnixTimeSeconds(hour.dt).LocalDateTime;
+                    labels.Append($"'{hourlyTime.ToString("h tt")}',");
+                    temperatures.Append($"{hour.temp},");
+                }
+
+                // Remove trailing commas and close arrays
+                if (labels.Length > 1) labels.Length--; // Remove last comma
+                labels.Append("]");
+                if (temperatures.Length > 1) temperatures.Length--; // Remove last comma
+                temperatures.Append("]");
+
+                // Generate HTML for the canvas and JavaScript for Chart.js
+                string chartHtml = $@"
+                    <canvas id='hourlyTempChart'></canvas>
+                    <script>
+                        var ctx = document.getElementById('hourlyTempChart').getContext('2d');
+                        var hourlyTempChart = new Chart(ctx, {{
+                            type: 'line',
+                            data: {{
+                                labels: {labels.ToString()},
+                                datasets: [{{
+                                    label: 'Temperature (°F)',
+                                    data: {temperatures.ToString()},
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    borderWidth: 1,
+                                    fill: true
+                                }}]
+                            }},
+                            options: {{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {{
+                                    x: {{
+                                        title: {{
+                                            display: true,
+                                            text: 'Time'
+                                        }}
+                                    }},
+                                    y: {{
+                                        beginAtZero: false,
+                                        title: {{
+                                            display: true,
+                                            text: 'Temperature (°F)'
+                                        }}
+                                    }}
+                                }}
+                            }}
+                        }});
+                    </script>
+                ";
+                hourlyForecastChartContainer.InnerHtml = chartHtml;
+            }
+            else
+            {
+                hourlyForecastChartContainer.InnerHtml = "<p>No hourly forecast data available.</p>";
+            }
+        }
+
+        private void DisplayWeatherAlerts(Alert[] alerts)
+        {
+            if (alerts != null && alerts.Length > 0)
+            {
+                string alertsHtml = "<ul>";
+                foreach (var alert in alerts)
+                {
+                    DateTime startTime = DateTimeOffset.FromUnixTimeSeconds(alert.start).LocalDateTime.ToLocalTime();
+                    DateTime endTime = DateTimeOffset.FromUnixTimeSeconds(alert.end).LocalDateTime.ToLocalTime();
+
+                    alertsHtml += $"<li class='alert-item'>";
+                    alertsHtml += $"<h4>{alert._event}</h4>"; // Use _event as 'event' is a C# keyword
+                    alertsHtml += $"<p><b>Sender:</b> {alert.sender_name}</p>";
+                    alertsHtml += $"<p><b>Period:</b> {startTime.ToString("M/d h:mm tt")} - {endTime.ToString("M/d h:mm tt")}</p>";
+                    alertsHtml += $"<p>{alert.description}</p>";
+                    if (alert.tags != null && alert.tags.Length > 0)
+                    {
+                        alertsHtml += $"<p><b>Tags:</b> {string.Join(", ", alert.tags)}</p>";
+                    }
+                    alertsHtml += $"</li>";
+                }
+                alertsHtml += "</ul>";
+                weatherAlertsContainer.InnerHtml = alertsHtml;
+            }
+            else
+            {
+                weatherAlertsTitle.Visible = false;
+                weatherAlertsContainer.InnerHtml = "<p style=\"text-align:center;\">No weather alerts at this time.</p>";
+            }
+        }
+
+
+
+        private string GetCompassDirection(int degrees)
+        {
+            string[] directions = { "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW" };
+            // Normalize degrees to be within 0-360
+            degrees = (degrees + 360) % 360;
+            // Calculate index into the directions array
+            int index = (int)Math.Round((double)degrees / 22.5);
+            // Ensure index is within bounds (0-15)
+            index = index % 16;
+            return directions[index];
+        }
+
 
         public void LoadSettings()
         {
