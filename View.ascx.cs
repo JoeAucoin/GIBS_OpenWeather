@@ -246,10 +246,13 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 temperatures.Append("]");
 
                 // Generate HTML for the canvas and JavaScript for Chart.js
+                string canvasId = $"hourlyTempChart_{ModuleId}";
+
+                // Generate HTML for the canvas and JavaScript for Chart.js
                 string chartHtml = $@"
-                    <canvas id='hourlyTempChart'></canvas>
+                    <canvas id='{canvasId}'></canvas>
                     <script>
-                        var ctx = document.getElementById('hourlyTempChart').getContext('2d');
+                        var ctx = document.getElementById('{canvasId}').getContext('2d');
                         var hourlyTempChart = new Chart(ctx, {{
                             type: 'line',
                             data: {{
