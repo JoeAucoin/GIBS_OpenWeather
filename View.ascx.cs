@@ -58,8 +58,6 @@ namespace GIBS.Modules.GIBS_OpenWeather
             base.OnInit(e);
             Page.ClientScript.RegisterClientScriptInclude(this.GetType(), "ChartJS", ("https://cdn.jsdelivr.net/npm/chart.js"));
 
-          //  DotNetNuke.Web.Client.ClientResourceManagement.ClientResourceManager.RegisterScript(this.Page, "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit", FileOrder.Js.DefaultPriority, "DnnPageHeaderProvider");
-
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -99,6 +97,7 @@ namespace GIBS.Modules.GIBS_OpenWeather
             {
                 weatherOverview.InnerHtml = $"<h3>{locationData.name}, {locationData.state}</h3>";
                 weatherOverview.InnerHtml += $"<p>{overviewData.weather_overview}</p>";
+                //weatherOverview.InnerHtml += $"<p>{overviewData.weather_overview.Replace("miles.","meters.")}</p>";
             }
             else
             {
@@ -145,7 +144,7 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 weatherHtml += $"<b>Clouds:</b> {current.clouds}%<br />";
                 // Convert meters to miles for visibility
                 double visibilityInMiles = current.visibility * 0.000621371;
-                weatherHtml += $"<b>Visibility:</b> {current.visibility} meters ({visibilityInMiles:F2} miles)<br />"; // Display both
+                weatherHtml += $"<b>Visibility:</b> {current.visibility:N0} meters ({visibilityInMiles:F2} miles)<br />"; // Display both
 
                 weatherHtml += $"<b>UV Index:</b> {current.uvi}<br />";
                 DateTime sunrise = DateTimeOffset.FromUnixTimeSeconds(current.sunrise).LocalDateTime;
@@ -180,7 +179,7 @@ namespace GIBS.Modules.GIBS_OpenWeather
                         iconimage = $"<img src =\"{iconUrl}\" alt=\"{description}\" title=\"{description}\" align=\"right\" style=\"rightimg\">";
                     }
 
-                    forecastHtml += $"<li><strong>{dayOfWeek} ({forecastDate.ToString("M/d")})</strong> {iconimage}";
+                    forecastHtml += $"<li><span class=\"weatherDate\">{dayOfWeek} ({forecastDate.ToString("M/d")})</span> {iconimage}";
                     forecastHtml += $"<br><b>Forecast:</b> {description.ToUpper()}";
                     forecastHtml += $"<br><b>High:</b> {day.temp.max}°F / Low: {day.temp.min}°F";
                     forecastHtml += $"<br><b>Day:</b> {day.temp.day}°F / Night: {day.temp.night}°F";
@@ -323,7 +322,7 @@ namespace GIBS.Modules.GIBS_OpenWeather
             else
             {
                 weatherAlertsTitle.Visible = false;
-                weatherAlertsContainer.InnerHtml = "<p style=\"text-align:center;\">No weather alerts at this time.</p>";
+                weatherAlertsContainer.InnerHtml = "<p style=\"text-align:center;font-size: 0.8em;\">No weather alerts at this time.</p>";
             }
         }
 

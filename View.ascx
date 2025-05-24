@@ -69,6 +69,12 @@
         width: 100%;
         margin-top: 20px;
     }
+     .gibs-openweathermap .weatherDate {
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #e65100; /* Darker orange */
+ }
+    
 </style>
 
 <div class="gibs-openweathermap">
