@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="GIBS_OpenWeather" type="Module" version="00.00.10">
+    <package name="GIBS_OpenWeather" type="Module" version="00.00.11">
       <friendlyName>GIBS_OpenWeather</friendlyName>
       <description>GIBS.com GIBS_OpenWeather module</description>
       <iconFile>~/DesktopModules/GIBS_OpenWeather/Images/OpenWeather.png</iconFile>
@@ -29,7 +29,7 @@
             <script type="UnInstall">
               <path>Providers\DataProviders\SqlDataProvider</path>
               <name>Uninstall.SqlDataProvider</name>
-              <version>00.00.10</version>
+              <version>00.00.11</version>
             </script>
           </scripts>
         </component>

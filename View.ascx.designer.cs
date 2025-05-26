@@ -58,5 +58,32 @@ namespace GIBS.Modules.GIBS_OpenWeather
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl hourlyForecastChartContainer;
+
+        /// <summary>
+        /// hourlyWindChartContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl hourlyWindChartContainer;
+
+        /// <summary>
+        /// dailyTempChartContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dailyTempChartContainer;
+
+        /// <summary>
+        /// dailyWindChartContainer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dailyWindChartContainer;
     }
 }

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 .owcredits {
     width: 100%;
     text-align: right;
@@ -10,6 +12,7 @@ hr.thickhr {
 }
 
 .currentConditions {
+    font-family: 'Open Sans';
     font-size: 1.5em;
 }
 
@@ -22,10 +25,11 @@ hr.thickhr {
     background-position: 10px center;
     color: #00529B;
     background-color: #BDE5F8;
-    background-image: url('https://i.imgur.com/ilgqWuX.png');
+    background-image: url('/Icons/Sigma/Help_32x32_Standard.png');
 }
 
 .divcentered {
     max-width: fit-content;
     margin-inline: auto;
 }
+

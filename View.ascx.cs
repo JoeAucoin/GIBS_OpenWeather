@@ -88,6 +88,23 @@ namespace GIBS.Modules.GIBS_OpenWeather
             double latitude = Double.Parse(_latitude.ToString());   //     41.6821; // Chatham, MA
             double longitude = Double.Parse(_longitude.ToString());     //-69.9597; // Chatham, MA
 
+            if (!double.TryParse(_latitude, out latitude) || !double.TryParse(_longitude, out longitude))
+            {
+                // Handle invalid lat/lon from settings
+                weatherOverview.InnerHtml = "<p>Error: Invalid Latitude or Longitude in settings.</p>";
+                currentWeather.InnerHtml = "";
+                dailyForecast.InnerHtml = "";
+                hourlyForecastChartContainer.InnerHtml = "";
+                hourlyWindChartContainer.InnerHtml = ""; // Clear if no data
+                dailyTempChartContainer.InnerHtml = ""; // Clear if no data
+                dailyWindChartContainer.InnerHtml = ""; // Clear if no data
+                weatherAlertsContainer.InnerHtml = "";
+                locationDisplay.InnerHtml = "<h3>Location Not Configured</h3>";
+                return;
+            }
+
+
+
             WeatherProvider provider = new WeatherProvider(apiKey, latitude, longitude);
             WeatherData weatherData = provider.GetWeatherData();
             WeatherOverview overviewData = provider.GetWeatherOverview();
@@ -109,6 +126,9 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 DisplayCurrentWeather(weatherData.current);
                 DisplayDailyForecast(weatherData.daily);
                 DisplayHourlyForecast(weatherData.hourly);
+                DisplayHourlyWindSpeed(weatherData.hourly); // Call new method for hourly wind speed
+                DisplayDailyTemperatureChart(weatherData.daily); // Call new method for daily temperature
+                DisplayDailyWindSpeedChart(weatherData.daily); // Call new method for daily wind speed
                 DisplayWeatherAlerts(weatherData.alerts);
                 locationDisplay.Visible = false;
             }
@@ -117,6 +137,9 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 currentWeather.InnerHtml = "<p>Failed to retrieve weather data.</p>";
                 dailyForecast.InnerHtml = "";
                 hourlyForecastChartContainer.InnerHtml = ""; // Clear if no data
+                hourlyWindChartContainer.InnerHtml = ""; // Clear if no data
+                dailyTempChartContainer.InnerHtml = ""; // Clear if no data
+                dailyWindChartContainer.InnerHtml = ""; // Clear if no data
                 weatherAlertsContainer.InnerHtml = ""; // Clear if no data
                 weatherAlertsTitle.Visible = false;
             }
@@ -294,6 +317,251 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 hourlyForecastChartContainer.InnerHtml = "<p>No hourly forecast data available.</p>";
             }
         }
+
+        private void DisplayHourlyWindSpeed(Hourly[] hourly)
+        {
+            if (hourly != null && hourly.Length > 0)
+            {
+                var labels = new System.Text.StringBuilder();
+                var windSpeeds = new System.Text.StringBuilder();
+
+                labels.Append("[");
+                windSpeeds.Append("[");
+
+                foreach (var hour in hourly.Take(24))
+                {
+                    DateTime hourlyTime = DateTimeOffset.FromUnixTimeSeconds(hour.dt).LocalDateTime;
+                    labels.Append($"'{hourlyTime.ToString("h tt")}',");
+                    windSpeeds.Append($"{hour.wind_speed},");
+                }
+
+                if (labels.Length > 1) labels.Length--;
+                labels.Append("]");
+                if (windSpeeds.Length > 1) windSpeeds.Length--;
+                windSpeeds.Append("]");
+
+                string canvasId = $"hourlyWindChart_{ModuleId}";
+
+                string chartHtml = $@"
+                    <canvas id='{canvasId}'></canvas>
+                    <script>
+                        var ctx = document.getElementById('{canvasId}').getContext('2d');
+                        var hourlyWindChart = new Chart(ctx, {{
+                            type: 'line',
+                            data: {{
+                                labels: {labels.ToString()},
+                                datasets: [{{
+                                    label: 'Wind Speed (mph)',
+                                    data: {windSpeeds.ToString()},
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderWidth: 1,
+                                    fill: true
+                                }}]
+                            }},
+                            options: {{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {{
+                                    x: {{
+                                        title: {{
+                                            display: true,
+                                            text: 'Time'
+                                        }}
+                                    }},
+                                    y: {{
+                                        beginAtZero: true, // Wind speed should start at 0
+                                        title: {{
+                                            display: true,
+                                            text: 'Wind Speed (mph)'
+                                        }}
+                                    }}
+                                }}
+                            }}
+                        }});
+                    </script>
+                ";
+                hourlyWindChartContainer.InnerHtml = chartHtml;
+            }
+            else
+            {
+                hourlyWindChartContainer.InnerHtml = "<p>No hourly wind speed data available.</p>";
+            }
+        }
+
+        private void DisplayDailyTemperatureChart(Daily[] daily)
+        {
+            if (daily != null && daily.Length > 0)
+            {
+                var labels = new System.Text.StringBuilder();
+                var maxTemps = new System.Text.StringBuilder();
+                var minTemps = new System.Text.StringBuilder();
+
+                labels.Append("[");
+                maxTemps.Append("[");
+                minTemps.Append("[");
+
+                foreach (var day in daily)
+                {
+                    DateTime forecastDate = DateTimeOffset.FromUnixTimeSeconds(day.dt).LocalDateTime.Date;
+                    labels.Append($"'{forecastDate.ToString("M/d")}',");
+                    maxTemps.Append($"{day.temp.max},");
+                    minTemps.Append($"{day.temp.min},");
+                }
+
+                if (labels.Length > 1) labels.Length--;
+                labels.Append("]");
+                if (maxTemps.Length > 1) maxTemps.Length--;
+                maxTemps.Append("]");
+                if (minTemps.Length > 1) minTemps.Length--;
+                minTemps.Append("]");
+
+                string canvasId = $"dailyTempChart_{ModuleId}";
+
+                string chartHtml = $@"
+                    <canvas id='{canvasId}'></canvas>
+                    <script>
+                        var ctx = document.getElementById('{canvasId}').getContext('2d');
+                        var dailyTempChart = new Chart(ctx, {{
+                            type: 'line',
+                            data: {{
+                                labels: {labels.ToString()},
+                                datasets: [
+                                    {{
+                                        label: 'Max Temp (°F)',
+                                        data: {maxTemps.ToString()},
+                                        borderColor: 'rgba(255, 159, 64, 1)',
+                                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                                        borderWidth: 1,
+                                        fill: false
+                                    }},
+                                    {{
+                                        label: 'Min Temp (°F)',
+                                        data: {minTemps.ToString()},
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                        borderWidth: 1,
+                                        fill: false
+                                    }}
+                                ]
+                            }},
+                            options: {{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {{
+                                    x: {{
+                                        title: {{
+                                            display: true,
+                                            text: 'Date'
+                                        }}
+                                    }},
+                                    y: {{
+                                        beginAtZero: false,
+                                        title: {{
+                                            display: true,
+                                            text: 'Temperature (°F)'
+                                        }}
+                                    }}
+                                }}
+                            }}
+                        }});
+                    </script>
+                ";
+                dailyTempChartContainer.InnerHtml = chartHtml;
+            }
+            else
+            {
+                dailyTempChartContainer.InnerHtml = "<p>No daily temperature data available.</p>";
+            }
+        }
+
+        private void DisplayDailyWindSpeedChart(Daily[] daily)
+        {
+            if (daily != null && daily.Length > 0)
+            {
+                var labels = new System.Text.StringBuilder();
+                var windSpeeds = new System.Text.StringBuilder();
+                var windGusts = new System.Text.StringBuilder();
+
+                labels.Append("[");
+                windSpeeds.Append("[");
+                windGusts.Append("[");
+
+                foreach (var day in daily)
+                {
+                    DateTime forecastDate = DateTimeOffset.FromUnixTimeSeconds(day.dt).LocalDateTime.Date;
+                    labels.Append($"'{forecastDate.ToString("M/d")}',");
+                    windSpeeds.Append($"{day.wind_speed},");
+                    windGusts.Append($"{day.wind_gust},");
+                }
+
+                if (labels.Length > 1) labels.Length--;
+                labels.Append("]");
+                if (windSpeeds.Length > 1) windSpeeds.Length--;
+                windSpeeds.Append("]");
+                if (windGusts.Length > 1) windGusts.Length--;
+                windGusts.Append("]");
+
+                string canvasId = $"dailyWindChart_{ModuleId}";
+
+                string chartHtml = $@"
+                    <canvas id='{canvasId}'></canvas>
+                    <script>
+                        var ctx = document.getElementById('{canvasId}').getContext('2d');
+                        var dailyWindChart = new Chart(ctx, {{
+                            type: 'line',
+                            data: {{
+                                labels: {labels.ToString()},
+                                datasets: [
+                                    {{
+                                        label: 'Avg Wind Speed (mph)',
+                                        data: {windSpeeds.ToString()},
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                        borderWidth: 1,
+                                        fill: false
+                                    }},
+                                    {{
+                                        label: 'Wind Gust (mph)',
+                                        data: {windGusts.ToString()},
+                                        borderColor: 'rgba(153, 102, 255, 1)',
+                                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                        borderWidth: 1,
+                                        fill: false
+                                    }}
+                                ]
+                            }},
+                            options: {{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {{
+                                    x: {{
+                                        title: {{
+                                            display: true,
+                                            text: 'Date'
+                                        }}
+                                    }},
+                                    y: {{
+                                        beginAtZero: true,
+                                        title: {{
+                                            display: true,
+                                            text: 'Wind Speed (mph)'
+                                        }}
+                                    }}
+                                }}
+                            }}
+                        }});
+                    </script>
+                ";
+                dailyWindChartContainer.InnerHtml = chartHtml;
+            }
+            else
+            {
+                dailyWindChartContainer.InnerHtml = "<p>No daily wind speed data available.</p>";
+            }
+        }
+
+
 
         private void DisplayWeatherAlerts(Alert[] alerts)
         {

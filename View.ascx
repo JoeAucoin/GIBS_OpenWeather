@@ -21,10 +21,17 @@
         padding-bottom: 5px;
         margin-top: 20px;
     }
-    .gibs-openweathermap ul {
+    .gibs-openweathermap ul li {
         list-style: none;
-        padding: 0;
+        padding: 10px;
     }
+
+     .gibs-openweathermap li:before {
+        color: #e65100;
+        content: "\27bd \0020";
+        padding-right: 6px;
+    }
+
     .gibs-openweathermap li {
         margin-bottom: 10px;
         padding: 10px;
@@ -90,15 +97,31 @@
         <p>Loading weather alerts...</p>
     </div>
 
-    <h3>Hourly Temperature Forecast</h3>
+    <h3>Hourly Temperature and Wind Forecast</h3>
     <div id="hourlyForecastChartContainer" runat="server" class="chart-container">
         <p>Loading hourly forecast chart...</p>
     </div>
+
+    <div id="hourlyWindChartContainer" runat="server" class="chart-container">
+    </div>
+
 
     <h3>Current Conditions</h3>
     <div id="currentWeather" runat="server">
         <p>Loading current weather...</p>
     </div>
+
+   <hr class="thickhr">
+
+       <h3>Daily Temperature and Wind Forecast</h3>
+  <div id="dailyTempChartContainer" runat="server" class="chart-container">
+      <p>Loading daily forecast chart...</p>
+  </div>
+
+  <div id="dailyWindChartContainer" runat="server" class="chart-container">
+  </div>
+
+
 
     <h3>Daily Forecast</h3>
     <div id="dailyForecast" runat="server">
