@@ -149,10 +149,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\leaflet.css" />
     <Content Include="Documentation\Documentation.css" />
     <Content Include="Documentation\Documentation.html" />
     <Content Include="Edit.ascx" />
+    <Content Include="Images\layers-2x.png" />
+    <Content Include="Images\layers.png" />
+    <Content Include="Images\marker-icon-2x.png" />
+    <Content Include="Images\marker-icon.png" />
+    <Content Include="Images\marker-shadow.png" />
     <Content Include="Images\OpenWeather.png" />
+    <Content Include="js\leaflet.js" />
     <Content Include="License.txt" />
     <Content Include="module.css" />
     <Content Include="ReleaseNotes.txt" />

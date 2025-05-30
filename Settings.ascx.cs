@@ -83,7 +83,7 @@ namespace GIBS.Modules.GIBS_OpenWeather
                     if (Settings.Contains("longitude"))
                         txtLongitude.Text = Settings["longitude"].ToString();
 
-                   
+                    ddlMapZoom.SelectedValue = this.MapZoom.ToString();
 
                 }
             }
@@ -110,6 +110,7 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 modules.UpdateModuleSetting(ModuleId, "countryCode", txtCountryCode.Text);
                 modules.UpdateModuleSetting(ModuleId, "latitude", txtLatitude.Text);
                 modules.UpdateModuleSetting(ModuleId, "longitude", txtLongitude.Text);
+                modules.UpdateModuleSetting(ModuleId, "MapZoom", ddlMapZoom.SelectedValue);
             }
             catch (Exception exc) //Module failed to load
             {

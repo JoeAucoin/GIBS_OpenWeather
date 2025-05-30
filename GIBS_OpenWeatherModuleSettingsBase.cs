@@ -12,6 +12,7 @@
 
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Services.Localization;
+using System;
 using System.Web.UI;
 
 namespace GIBS.Modules.GIBS_OpenWeather
@@ -104,6 +105,21 @@ namespace GIBS.Modules.GIBS_OpenWeather
             {
                 var mc = new ModuleController();
                 mc.UpdateTabModuleSetting(TabModuleId, "longitude", value.ToString());
+            }
+        }
+
+        public int MapZoom
+        {
+            get
+            {
+                if (Settings.Contains("MapZoom"))
+                    return Convert.ToInt16(Settings["MapZoom"]);
+                return 12;
+            }
+            set
+            {
+                var mc = new ModuleController();
+                mc.UpdateTabModuleSetting(TabModuleId, "MapZoom", value.ToString());
             }
         }
 

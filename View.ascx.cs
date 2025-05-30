@@ -38,7 +38,7 @@ namespace GIBS.Modules.GIBS_OpenWeather
     /// 
     /// </summary>
     /// -----------------------------------------------------------------------------
-    public partial class View : GIBS_OpenWeatherModuleBase  //, IActionable
+    public partial class View : GIBS_OpenWeatherModuleSettingsBase  //, IActionable
     {
 
       //  protected HtmlGenericControl weatherOverview; // Already existing
@@ -51,7 +51,7 @@ namespace GIBS.Modules.GIBS_OpenWeather
         public string _latitude = "";
         public string _longitude = "";
         public string _apiKey = "";
-
+        public string _locationName = "";
 
         protected override void OnInit(EventArgs e)
         {
@@ -115,6 +115,7 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 weatherOverview.InnerHtml = $"<h3>{locationData.name}, {locationData.state}</h3>";
                 weatherOverview.InnerHtml += $"<p>{overviewData.weather_overview}</p>";
                 //weatherOverview.InnerHtml += $"<p>{overviewData.weather_overview.Replace("miles.","meters.")}</p>";
+                _locationName = $"{locationData.name}, {locationData.state}";
             }
             else
             {
@@ -131,6 +132,8 @@ namespace GIBS.Modules.GIBS_OpenWeather
                 DisplayDailyWindSpeedChart(weatherData.daily); // Call new method for daily wind speed
                 DisplayWeatherAlerts(weatherData.alerts);
                 locationDisplay.Visible = false;
+                // Generate Map Script - NOW PASSING DOUBLES
+                GenerateMapScript(latitude, longitude, this.ModuleId);
             }
             else
             {
@@ -639,10 +642,44 @@ namespace GIBS.Modules.GIBS_OpenWeather
             }
         }
 
+        private void GenerateMapScript(double latitude, double longitude, int moduleId)
+        {
+            string mapDivId = $"weatherMap{moduleId}"; // The unique ID of the map container div
+
+            // Resolve the correct client-side URL for Leaflet's images folder
+            string leafletImagePath = ResolveUrl($"{ControlPath}Images/");
+
+            string mapScript = $@"
+                <script type='text/javascript'>
+                    document.addEventListener('DOMContentLoaded', function () {{
+                        var mapElement = document.getElementById('{mapDivId}');
+                        if (mapElement) {{
+                            // Override Leaflet's default icon paths to point to your local images folder
+                            L.Icon.Default.imagePath = '{leafletImagePath}';
+
+                            // Initialize map centered on the station coordinates with a zoom level from settings
+                            var map = L.map('{mapDivId}').setView([{latitude}, {longitude}], {this.MapZoom}); 
+
+                            // Add OpenStreetMap tiles
+                            L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+                                maxZoom: 19,
+                                attribution: '&copy; <a href=""http://www.openstreetmap.org/copyright"">OpenStreetMap</a> contributors'
+                            }}).addTo(map);
+
+                            // Add a marker at the station location
+                            L.marker([{latitude}, {longitude}]).addTo(map)
+                                .bindPopup('{_locationName.ToString()}') // Use the location name as the popup text
+                                .openPopup(); // Automatically open the popup on load
+                        }}
+                    }});
+                </script>
+            ";
+            Page.ClientScript.RegisterStartupScript(this.GetType(), $"TideMapScript_{moduleId}", mapScript, false);
+        }
 
         //public ModuleActionCollection ModuleActions
         //{
-        //    get
+        //    getlocationDisplay
         //    {
         //        var actions = new ModuleActionCollection
         //            {

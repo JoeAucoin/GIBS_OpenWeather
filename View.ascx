@@ -1,6 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="View.ascx.cs" Inherits="GIBS.Modules.GIBS_OpenWeather.View"   %>
 
-
+<%-- Leaflet.js CSS for the map (LOCAL) --%>
+<link rel="stylesheet" href="<%= ControlPath %>css/leaflet.css" />
 
 <style>
     /* Basic styling for the weather module */
@@ -87,10 +88,14 @@
 <div class="gibs-openweathermap">
     <h2 id="locationDisplay" runat="server">Loading Location...</h2>
 
+<%-- Map Container (Ensure you've applied the ModuleId to the ID for uniqueness) --%>
+ <div id="weatherMap<%= ModuleId %>" style="min-width: 300px; height: 300px; border: 1px solid #ccc; background-color: #f0f0f0;"></div>
    
     <div id="weatherOverview" runat="server">
         <p>Loading weather overview...</p>
     </div>
+
+
 
     <h3 id="weatherAlertsTitle" runat="server">Weather Alerts</h3>
     <div id="weatherAlertsContainer" runat="server">
@@ -133,3 +138,6 @@
 
 
 <div class="owcredits"><cite>Weather data provided by <a href="https://openweathermap.org/" target="_blank">OpenWeather</a></cite></div>
+
+<%-- Leaflet.js JavaScript for the map (LOCAL, place at bottom for better performance) --%>
+<script src="<%= ControlPath %>js/leaflet.js"></script>
